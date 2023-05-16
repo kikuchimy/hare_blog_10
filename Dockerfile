@@ -1,7 +1,15 @@
+# nodeのビルド用イメージ
+FROM node:18-slim as node-builder
+
+COPY . ./app
+RUN cd /app && npm ci && npm run build
+
+
 # richarvey/nginx-php-fpmをベースとする
 FROM richarvey/nginx-php-fpm:latest
 
 COPY . .
+COPY --from=node-builder /app/public ./public
 
 # Image config
 ENV SKIP_COMPOSER 1
